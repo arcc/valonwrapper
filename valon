@@ -1,0 +1,85 @@
+#!/usr/bin/env python
+
+import logging
+from optparse import OptionParser
+from sys import exit
+
+import valon_synth
+
+logger = logging.getLogger(__name__)
+
+parser = OptionParser()
+parser.add_option("-a","--synth-a",action="store_true",dest='synth_a',
+                default=True,help="Use Synth A")
+parser.add_option("-b","--synth-b",action="store_true",dest='synth_b',
+                default=False,help="Use Synth B")
+#parser.add_option("-s","--set",action="store_true",dest="freq",
+                #default=False,help="Set Frequency")
+parser.add_option("-t","--tty",action="store",dest="tty",
+                default="/dev/ttyUSB0",
+                help="Set Serial Port. Default is ")
+parser.add_option("-v","--verbose",action="store_true",dest="verbose",
+                default=True,
+                help="Make the script verbose")
+parser.add_option("-f","--flash",action="store_true",dest="flash",
+                default=True,
+                help='Write frequencies to non-volatile memory')
+parser.set_usage(
+"""%prog [options] [freq]
+    If no frequency is provided, the current frequencies are read from the
+    Valon Synth. This wrapper only supports one input frequency, and if
+    both the -a and -b flags are used, the input frequency is applied to
+    both.
+    """)
+
+(options,args) = parser.parse_args()
+
+if options.verbose:
+    logger.setLevel(logging.INFO)
+
+try:
+    valon = valon_synth.Synthesizer(options.tty)
+except valon_synth.serial.SerialException as err:
+    logger.critical("Unable to open serial port.\nError MSG:\n%s"%err)
+    exit(1)
+
+if not args:
+    a_freq = valon.get_freqency(valon_synth.SYNTH_A)
+    b_freq = valon.get_freqency(valon_synth.SYNTH_B)
+    
+    print "Synth A: %s MHz"%a_freq
+    print "Synth B: %s MHz"%b_freq
+
+    exit(0)
+
+if args:
+    if len(args) > 1:
+        logger.error("Too many arguments.")
+        parser.print_usage()
+        exit(1)
+    try:
+        freq = float(args[0])
+    except ValueError:
+        logger.error('Invalid argument. Please use integer or float.')
+
+    if options.synth_a:
+        if valon.set_frequency(valon_synth.SYNTH_A, freq):
+            logger.info('Synth A set to %s'%freq)
+        else:
+            logger.warning('Failed to set Synth A')
+    
+    if options.synth_b:
+        if valon.set_frequency(valon_synth.SYNTH_B, freq):
+            logger.info('Synth B set to %s'%freq)
+        else:
+            logger.warning('Failed to set Synth B')
+    
+    if options.flash:
+        if valon.flash():
+            logger.info('Frequencies written to non-volatile memory')
+        else:
+            logger.warning('Failed to write to memory')
+
+    logger.info('All flags handled. Exiting successfully.')
+    exit(0)
+
