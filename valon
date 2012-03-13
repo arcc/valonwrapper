@@ -6,7 +6,7 @@ from sys import exit
 
 import valon_synth
 
-logger = logging.getLogger(__name__)
+logger = logging.basicConfig()
 
 parser = OptionParser()
 parser.add_option("-a","--synth-a",action="store_true",dest='synth_a',
@@ -44,8 +44,8 @@ except valon_synth.serial.SerialException as err:
     exit(1)
 
 if not args:
-    a_freq = valon.get_freqency(valon_synth.SYNTH_A)
-    b_freq = valon.get_freqency(valon_synth.SYNTH_B)
+    a_freq = valon.get_frequency(valon_synth.SYNTH_A)
+    b_freq = valon.get_frequency(valon_synth.SYNTH_B)
     
     print "Synth A: %s MHz"%a_freq
     print "Synth B: %s MHz"%b_freq
