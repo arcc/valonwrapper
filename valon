@@ -6,7 +6,7 @@ from sys import exit
 
 import valon_synth
 
-logger = logging.basicConfig()
+logger = logging.StreamHandler()
 
 parser = OptionParser()
 parser.add_option("-a","--synth-a",action="store_true",dest='synth_a',
