@@ -9,6 +9,8 @@ import valon_synth
 ch = logging.StreamHandler()
 fmt = logging.Formatter("%(levelname)s:\t%(message)s")
 ch.setFormatter(fmt)
+logger = logging.getLogger(__name__)
+logger.addHandler(ch)
 
 parser = OptionParser()
 parser.add_option("-a","--synth-a",action="store_true",dest='synth_a',
@@ -21,7 +23,7 @@ parser.add_option("-t","--tty",action="store",dest="tty",
                 default="/dev/ttyUSB0",
                 help="Set Serial Port. Default is ")
 parser.add_option("-v","--verbose",action="store_true",dest="verbose",
-                default=True,
+                default=False,
                 help="Make the script verbose")
 parser.add_option("-f","--flash",action="store_true",dest="flash",
                 default=True,
@@ -37,10 +39,9 @@ parser.set_usage(
 (options,args) = parser.parse_args()
 
 if options.verbose:
-    ch.setLevel(logging.DEBUG)
-
-logger = logging.getLogger(__name__)
-logger.addHandler(ch)
+    logger.setLevel(logging.DEBUG)
+else:
+    logger.setLevel(logging.INFO)
 
 try:
     valon = valon_synth.Synthesizer(options.tty)
