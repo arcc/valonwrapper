@@ -12,7 +12,7 @@ ch.setFormatter(fmt)
 
 parser = OptionParser()
 parser.add_option("-a","--synth-a",action="store_true",dest='synth_a',
-                default=True,help="Use Synth A")
+                default=False,help="Use Synth A")
 parser.add_option("-b","--synth-b",action="store_true",dest='synth_b',
                 default=False,help="Use Synth B")
 #parser.add_option("-s","--set",action="store_true",dest="freq",
@@ -78,6 +78,13 @@ if args:
             logger.info('Synth B set to %s'%freq)
         else:
             logger.warning('Failed to set Synth B')
+
+    if not options.synth_a and not options.synth_b:
+        logger.warning('No synth set. Assuming Synth A.')
+        if valon.set_frequency(valon_synth.SYNTH_A, freq):
+            logger.info('Synth A set to %s'%freq)
+        else:
+            logger.warning('Failed to set Synth A')
     
     if options.flash:
         if valon.flash():
