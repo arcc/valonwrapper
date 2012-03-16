@@ -20,12 +20,17 @@ flags are used, the input frequency is applied to both.
 Options:
 ========
 
--h, --help         show this help message and exit
--a, --synth-a      Use Synth A
--b, --synth-b      Use Synth B
--t TTY, --tty=TTY  Set Serial Port. Default is /dev/usbTTY0
--v, --verbose      Make the script verbose
--f, --flash        Write frequencies to non-volatile memory
+*    `-h, --help`         show this help message and exit
+
+*    `-a, --synth-a`      Use Synth A
+
+*    `-b, --synth-b`      Use Synth B
+
+*    `-t TTY, --tty=TTY`  Set Serial Port. Default is /dev/usbTTY0
+
+*    `-v, --verbose`      Make the script verbose
+
+*    `-f, --flash`        Write frequencies to non-volatile memory
 
 
 
